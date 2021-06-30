@@ -1,10 +1,9 @@
 const db = require('../db/index')
 const { getTribe, getUser } = require('../util/utils')
-const { MessageEmbed } = require('discord.js')
 
 module.exports = {
   name: 'sets',
-  description: 'all sets for current season',
+  description: 'all sets',
   aliases: [],
   usage(prefix) {
     return `\`${prefix}sets [all OR player]\``
@@ -14,37 +13,23 @@ module.exports = {
   execute: async function(message, argsStr, embed) {
 
     const setDesc = []
-    const sqlseason = 'SELECT season FROM seasons WHERE guild_id = $1 ORDER BY season DESC LIMIT 1'
-    const valuesseason = [message.guild.id]
-    const resSeason = await db.query(sqlseason, valuesseason)
-    const season = resSeason.rows[0].season
 
-    const sql = 'SELECT * FROM set WHERE season = $1 AND guild_id = $2 ORDER BY id'
-    const values = [season, message.guild.id]
-    const resSets = await db.query(sql, values)
+    const sql = 'SELECT * FROM set ORDER BY id'
+    const resSets = await db.query(sql)
     let sets = resSets.rows
 
-    const sqlusers = 'SELECT * FROM points LEFT JOIN set ON set_id = id WHERE season = $1 ORDER BY set_id'
-    const valuesusers = [season]
-    const resPoints = await db.query(sqlusers, valuesusers)
+    const sqlusers = 'SELECT * FROM points LEFT JOIN set ON set_id = id ORDER BY set_id'
+    const resPoints = await db.query(sqlusers)
     let points = resPoints.rows
 
     if (argsStr.includes('all')) {
       if (sets.length === 0)
-        return embed.setDescription(`There are no sets yet for season ${season}`)
+        return embed.setDescription('There are no sets yet')
 
-      const incompletes = sets.filter(x => x.completed === false && !x.is_pro)
-      const completes = sets.filter(x => x.completed === true && !x.is_pro)
-      const incompletesPro = sets.filter(x => x.completed === false && x.is_pro)
-      const completesPro = sets.filter(x => x.completed === true && x.is_pro)
+      const incompletes = sets.filter(x => x.completed === false)
+      const completes = sets.filter(x => x.completed === true)
 
-      const otherEmbed = new MessageEmbed().setColor('#ED80A7')
-      otherEmbed.setColor('#ED80A7')
-      otherEmbed.setTitle(`There are ${incompletesPro.length + completesPro.length} total games for **pro** season ${season}.\n${incompletesPro.length} incompletes and ${completesPro.length} completed.`)
-        .setDescription(`You can use \`${process.env.PREFIX}incomplete all\` and \`${process.env.PREFIX}completed all\` to see the sets' details!`)
-
-      message.channel.send(otherEmbed)
-      embed.setTitle(`There are ${incompletes.length + completes.length} total games for regular season ${season}.\n${incompletes.length} incompletes and ${completes.length} completed.`)
+      embed.setTitle(`There are ${incompletes.length + completes.length} total games.\n${incompletes.length} incompletes and ${completes.length} completed.`)
         .setDescription(`You can use \`${process.env.PREFIX}incomplete all\` and \`${process.env.PREFIX}completed all\` to see the sets' details!`)
     } else {
       const mention = message.mentions.users.first()
@@ -62,7 +47,7 @@ module.exports = {
       const completes = sets.filter(x => x.completed === true)
       points = points.filter(x => sets.some(y => y.id === x.set_id))
 
-      embed.setTitle(`There are ${sets.length} total games for season ${season}.\n${incompletes.length} incompletes and ${completes.length} completed.`)
+      embed.setTitle(`There are ${sets.length} total games.\n${incompletes.length} incompletes and ${completes.length} completed.`)
       sets.forEach(set => {
         const setPoints = points.filter(x => x.set_id === set.id)
         set.player1 = setPoints[0].player_id
@@ -70,9 +55,9 @@ module.exports = {
       })
 
       if (sets.length === 0)
-        return embed.setTitle((argsStr) ? `There are no sets for ${user} during season ${season}` : `You have no sets for season ${season}`)
+        return embed.setTitle((argsStr) ? `There are no sets for ${user}` : 'You have no sets')
 
-      setDesc.push(`**All sets for ${user} during season ${season}**`)
+      setDesc.push(`**All sets for ${user}**`)
       setDesc.push('')
       sets.forEach(x => {
         const player1 = message.client.users.cache.get(x.player1)
@@ -83,7 +68,7 @@ module.exports = {
 
         const tribe1 = getTribe(x.tribes[0], emojiCache)
         const tribe2 = getTribe(x.tribes[1], emojiCache)
-        setDesc.push(`${x.is_pro ? 'Pro ' : ''}${x.id}: ${player1} & ${player2}`)
+        setDesc.push(`${x.id}: ${player1} & ${player2}`)
         setDesc.push(`${tribe1} & ${tribe2}`)
         setDesc.push('')
       })

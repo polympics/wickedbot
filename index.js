@@ -3,7 +3,6 @@ const { Client, MessageEmbed, Collection } = require('discord.js');
 const bot = new Client();
 const fs = require('fs')
 const prefix = process.env.PREFIX
-const db = require('./db/index')
 
 // bot.commands as a collection(Map) of commands from ./commands
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -20,7 +19,7 @@ for (const file of commandFiles) {
 // --------------------------------------
 bot.on('ready', () => {
   // eslint-disable-next-line no-console
-  console.log(`Logged in as ${bot.user.username} ${process.env.PREFIX}`);
+  console.log(`Logged in as ${bot.user.username} ${prefix}`);
 
   bot.user.setActivity(`${prefix}help`, { type: 'PLAYING' })
 });
@@ -64,8 +63,16 @@ bot.on('message', async message => {
   if (command.category === 'Staff' && (!command.permsAllowed.some(x => message.member.hasPermission(x)) && message.author.id !== '217385992837922819'))
     return message.channel.send('Only an admin can use this command, sorry!')
 
+  const color = [
+    '#F32C48',
+    '#009348',
+    '#000002',
+    '#F9BB1E',
+    '#007FB7'
+  ][Math.floor(Math.random() * 5)]
+
   // Instantiate the embed that's sent to every command execution
-  const embed = new MessageEmbed().setColor('#008800')
+  const embed = new MessageEmbed().setColor(color)
 
   try {
     // EXECUTE COMMAND
@@ -82,28 +89,6 @@ bot.on('message', async message => {
     return message.channel.send(`${error}`)
       .then().catch(console.error)
   }
-})
-
-bot.on('guildMemberUpdate', async (oldMember, newMember) => {
-  if (oldMember.roles.cache.size >= newMember.roles.cache.size)
-    return
-
-  const newRoles = newMember.roles.cache
-  newRoles.forEach((role, id) => {
-    if (oldMember.roles.cache.has(id))
-      newRoles.delete(id)
-  })
-
-  const sqlseason = 'SELECT season FROM seasons WHERE guild_id = $1 ORDER BY season DESC LIMIT 1'
-  const valuesseason = [newMember.guild.id]
-  const resSeason = await db.query(sqlseason, valuesseason)
-  const season = resSeason.rows[0].season
-
-  if (newRoles.first().name != 'Novice')
-    return
-
-  const chat = newMember.guild.channels.cache.get('433950651358380034')
-  return chat.send(`${newMember.user} just finished training and was awarded the @**Novice** role!\nThey now can \`${process.env.PREFIX}signup\` for **Season ${season}** and start playing sets with everyone!`)
 })
 
 bot.on('error', error => {

@@ -3,7 +3,7 @@ const { getUserById } = require('../util/utils')
 
 module.exports = {
   name: 'leaderboard',
-  description: 'show regular season leaderboard for players with 3 completed sets or more',
+  description: 'show leaderboard for players with 3 completed sets or more',
   aliases: ['lb'],
   usage(prefix) {
     return `\`${prefix}lb\``
@@ -11,29 +11,16 @@ module.exports = {
   category: 'Main',
   permsAllowed: ['VIEW_CHANNEL'],
   execute: async function(message, argsStr, embed) {
-    if (message.lb !== 0)
-      message.lb = 3
-
-    const sqlseason = 'SELECT season FROM seasons WHERE guild_id = $1 ORDER BY season DESC LIMIT 1'
-    const valuesseason = [message.guild.id]
-    const resSeason = await db.query(sqlseason, valuesseason)
-    const season = resSeason.rows[0].season
-
-    const sqlAgg = 'SELECT COUNT(id), SUM(points), SUM(malus) AS malus, player_id FROM set INNER JOIN points ON set_id = id WHERE season = $1 AND completed = true AND is_pro = false AND guild_id = $2 GROUP BY player_id HAVING COUNT(id) >= $3'
-    const valuesAgg = [season, message.guild.id, message.lb]
-    const resAgg = await db.query(sqlAgg, valuesAgg)
+    const sqlAgg = 'SELECT COUNT(id), SUM(points), SUM(malus) AS malus, player_id FROM set INNER JOIN points ON set_id = id WHERE completed = true GROUP BY player_id'
+    const resAgg = await db.query(sqlAgg)
     const rowsAgg = resAgg.rows
-    if (rowsAgg.length <= 2 && message.lb === 3)
-      throw `Looks like not enough players have enough sets (3 players needed with 3 completed sets) for a leaderboard to be generated yet for season ${season}`
 
-    const sql = 'SELECT * FROM set WHERE completed = true AND season = $1 AND is_pro = false AND guild_id = $2 ORDER BY id'
-    const values = [season, message.guild.id]
-    const resSets = await db.query(sql, values)
+    const sql = 'SELECT * FROM set WHERE completed = true ORDER BY id'
+    const resSets = await db.query(sql)
     const sets = resSets.rows
 
-    const sqlpoints = 'SELECT * FROM points LEFT JOIN set ON set_id = id AND is_pro = false WHERE completed = true AND season = $1 ORDER BY set_id'
-    const valuespoints = [season]
-    const resPoints = await db.query(sqlpoints, valuespoints)
+    const sqlpoints = 'SELECT * FROM points LEFT JOIN set ON set_id = id WHERE completed = true ORDER BY set_id'
+    const resPoints = await db.query(sqlpoints)
     const points = resPoints.rows
 
     rowsAgg.forEach(player => {
@@ -71,7 +58,7 @@ module.exports = {
       embed.addField(`${index}. **${user.username}**`, `(${orderedPlayer.wins}/${orderedPlayer.losses}/${orderedPlayer.ties}): **${orderedPlayer.ratio}**\n`)
     })
 
-    embed.setTitle(`Leaderboard for season ${season}`)
+    embed.setTitle('Leaderboard')
     return embed
   }
 };

@@ -3,7 +3,7 @@ const { getTribe, getUser } = require('../util/utils')
 
 module.exports = {
   name: 'incomplete',
-  description: 'incomplete sets for current season',
+  description: 'incomplete sets',
   aliases: ['in', 'i'],
   usage(prefix) {
     return `\`${prefix}incomplete [all OR player]\``
@@ -13,19 +13,13 @@ module.exports = {
   execute: async function(message, argsStr, embed) {
 
     const setDesc = []
-    const sqlseason = 'SELECT season FROM seasons WHERE guild_id = $1 ORDER BY season DESC LIMIT 1'
-    const valuesseason = [message.guild.id]
-    const resSeason = await db.query(sqlseason, valuesseason)
-    const season = resSeason.rows[0].season
 
-    const sql = 'SELECT * FROM set WHERE completed = false AND season = $1 AND guild_id = $2 ORDER BY id'
-    const values = [season, message.guild.id]
-    const resSets = await db.query(sql, values)
+    const sql = 'SELECT * FROM set WHERE completed = false ORDER BY id'
+    const resSets = await db.query(sql)
     let sets = resSets.rows
 
-    const sqlusers = 'SELECT * FROM points LEFT JOIN set ON set_id = id WHERE completed = false AND season = $1 ORDER BY set_id'
-    const valuesusers = [season]
-    const resPoints = await db.query(sqlusers, valuesusers)
+    const sqlusers = 'SELECT * FROM points LEFT JOIN set ON set_id = id WHERE completed = false ORDER BY set_id'
+    const resPoints = await db.query(sqlusers)
     let points = resPoints.rows
 
     if (argsStr.includes('all')) {
@@ -36,13 +30,12 @@ module.exports = {
         set.player2 = setPoints[1].player_id
       })
 
-      const incompletes = sets.filter(x => x.completed === false && !x.is_pro)
-      const incompletesPro = sets.filter(x => x.completed === false && x.is_pro)
+      const incompletes = sets.filter(x => x.completed === false)
 
       if (sets.length === 0)
-        return embed.setDescription(`There are no incomplete sets yet for season ${season}`)
+        return embed.setDescription('There are no incomplete sets anymore/yet')
 
-      setDesc.push(`**All ${sets.length} completed sets, ${incompletes.length} regular and ${incompletesPro.length} pro, for season ${season}**`)
+      setDesc.push(`**Total sets: ${sets.length},\nIncomplete sets: ${incompletes.length}**`)
 
     } else {
       const mention = message.mentions.users.first()
@@ -65,9 +58,9 @@ module.exports = {
       })
 
       if (sets.length === 0)
-        return embed.setDescription((argsStr) ? `There are no incomplete sets for ${user} during season ${season}` : `You have no incomplete sets for season ${season}`)
+        return embed.setDescription((argsStr) ? `There are no incomplete sets for ${user}` : 'You have no incomplete sets')
 
-      setDesc.push(`**All ${sets.length} incomplete sets for ${user} during season ${season}**`)
+      setDesc.push(`**All ${sets.length} incomplete sets for ${user}**`)
     }
     setDesc.push('')
 
@@ -81,12 +74,12 @@ module.exports = {
       const tribe1 = getTribe(x.tribes[0], emojiCache)
       const tribe2 = getTribe(x.tribes[1], emojiCache)
       // if()
-      setDesc.push(`${x.is_pro ? '**Pro** ' : ''}${x.id}: ${player1} & ${player2}`)
+      setDesc.push(`${x.id}: ${player1} & ${player2}`)
       setDesc.push(`${tribe1} & ${tribe2}`)
       setDesc.push('')
     })
     embed.setDescription(setDesc)
-      .setColor('#be8286')
+
     return embed
   }
 };
