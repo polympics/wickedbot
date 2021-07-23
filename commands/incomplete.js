@@ -1,5 +1,5 @@
 const db = require('../db/index')
-const { getTribe, getUser } = require('../util/utils')
+const { getTribe, getUser, getUserById } = require('../util/utils')
 
 module.exports = {
   name: 'incomplete',
@@ -45,7 +45,7 @@ module.exports = {
       else if (argsStr)
         user = getUser(message.guild, argsStr.toLowerCase())
       else
-        user = getUser(message.guild, message.author.username)
+        user = getUserById(message.guild, message.author.id)
 
       const userPoints = points.filter(x => x.player_id === user.id)
       sets = sets.filter(x => userPoints.some(y => y.set_id === x.id))
