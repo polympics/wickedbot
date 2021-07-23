@@ -12,13 +12,21 @@ module.exports.getUser = function(guild, name) {
   const members = guild.members.cache.filter(x => {
     let found
 
-    if (x.nickname) {
-      found = x.nickname.toLowerCase().includes(name.toLowerCase()) || x.user.username.toLowerCase().includes(name.toLowerCase())
-    } else {
-      found = x.user.username.toLowerCase().includes(name.toLowerCase()) || name.includes(x.id)
-    }
+    found = name === x.user.id
 
-    return found
+    if (found)
+      return found
+
+    found = x.user.username.toLowerCase().includes(name.toLowerCase())
+
+    if (found)
+      return found
+
+    if (x.nickname)
+      found = x.nickname.toLowerCase().includes(name.toLowerCase()) || x.user.username.toLowerCase().includes(name.toLowerCase())
+
+    if (found)
+      return found
   })
 
   if (members.size === 0)
