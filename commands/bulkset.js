@@ -10,8 +10,7 @@ module.exports = {
     return `\`${prefix}bulkset gere sgt, front kitu,\` etc`
   },
   category: 'Staff',
-  permsAllowed: ['MANAGE_GUILD', 'ADMINISTRATOR'],
-  isSimple: false,
+  permsAllowed: ['VIEW_AUDIT_LOG', 'MANAGE_GUILD', 'ADMINISTRATOR'],
   execute: async function(message, argsStr) {
     if (!argsStr)
       throw 'You need to include the set players...'
@@ -22,7 +21,15 @@ module.exports = {
 
     try {
       for (const group of args) {
-        const otherEmbed = new MessageEmbed().setColor('#ED80A7')
+        const color = [
+          '#F32C48',
+          '#009348',
+          '#000002',
+          '#F9BB1E',
+          '#007FB7'
+        ][Math.floor(Math.random() * 5)]
+
+        const otherEmbed = new MessageEmbed().setColor(color)
         message.channel.send(await newset.execute(message, group, otherEmbed, true))
       }
     } catch (e) {

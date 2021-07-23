@@ -10,7 +10,7 @@ module.exports = {
     return `\`${prefix}penalty flash 25 1000\``
   },
   category: 'Staff',
-  permsAllowed: ['VIEW_CHANNEL'],
+  permsAllowed: ['VIEW_AUDIT_LOG', 'MANAGE_GUILD', 'ADMINISTRATOR'],
   execute: async function(message, argsStr, embed) {
     // EXECUTE
 

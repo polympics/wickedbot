@@ -8,7 +8,7 @@ module.exports = {
     return `\`${prefix}deleteset 26\``
   },
   category: 'Staff',
-  permsAllowed: ['MANAGE_GUILD', 'ADMINISTRATOR'],
+  permsAllowed: ['VIEW_AUDIT_LOG', 'MANAGE_GUILD', 'ADMINISTRATOR'],
   execute: async function(message, argsStr) {
     if (!argsStr || isNaN(parseInt(argsStr)))
       throw 'You need to provide the set id.'

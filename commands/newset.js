@@ -1,6 +1,7 @@
 const db = require('../db/index')
 const { getUser, getTribe, getRandomTribes, getRandomMapTypeCode, getMapName } = require('../util/utils')
 
+
 module.exports = {
   name: 'newset',
   description: 'create a set with random tribes',
@@ -51,8 +52,12 @@ module.exports = {
       if (!member1 || !member2)
         throw 'There\'s a problem finding one of the players. Contact **jd (alphaSeahorse)** for support.'
 
-      if ((!member1.roles.cache.has(playerRole.id) || !member2.roles.cache.has(playerRole.id)))
-        throw `One of the defined players for a this set isn't signed up for **${playerRole.name}**.\nBoth need to have the **${playerRole.name}** role by doing \`${process.env.PREFIX}signup\`!`
+      if ((!member1.roles.cache.has(playerRole.id) || !member2.roles.cache.has(playerRole.id))) {
+        if (!member1.roles.cache.has(playerRole.id))
+          throw `${player1} (${player1.username}) isn't signed up for **${playerRole.name}**.\nThey need to have the **${playerRole.name}** role to be in sets!`
+        if (!member2.roles.cache.has(playerRole.id))
+          throw `${player2} (${player2.username}) isn't signed up for **${playerRole.name}**.\nThey need to have the **${playerRole.name}** role to be in sets!`
+      }
 
       const sql = 'INSERT INTO set (tribes, completed, map_type) VALUES ($1, false, $2) RETURNING id'
       const values = [[tribeKeys[0], tribeKeys[1]], mapTypeCode]
