@@ -74,7 +74,7 @@ module.exports = {
       const tribe1 = getTribe(x.tribes[0], emojiCache)
       const tribe2 = getTribe(x.tribes[1], emojiCache)
       // if()
-      setDesc.push(`${x.id}: ${player1} & ${player2}`)
+      setDesc.push(`${x.id}: ${player1} (**@${player1.username}**) & ${player2} (**@${player2.username}**)`)
       setDesc.push(`${tribe1} & ${tribe2}`)
       setDesc.push('')
     })
