@@ -9,8 +9,8 @@ module.exports = {
   usage(prefix) {
     return `\`${prefix}newset [player1] player2\``
   },
-  category: 'Main',
-  permsAllowed: ['VIEW_CHANNEL'],
+  category: 'Staff',
+  permsAllowed: ['VIEW_AUDIT_LOG', 'MANAGE_GUILD', 'ADMINISTRATOR'],
   execute: async function(message, argsStr, embed, bulk) {
     const args = argsStr.split(/ +/)
 
