@@ -1,5 +1,5 @@
 const db = require('../db/index')
-const { getTribe, getUser } = require('../util/utils')
+const { getTribe, getUser, getMapName } = require('../util/utils')
 
 module.exports = {
   name: 'completed',
@@ -75,7 +75,7 @@ module.exports = {
       const tribe2 = getTribe(x.tribes[1], emojiCache)
       // if()
       setDesc.push(`${x.id}: ${player1} (**@${player1.username}**) & ${player2} (**@${player2.username}**)`)
-      setDesc.push(`${tribe1} & ${tribe2}`)
+      setDesc.push(`${tribe1} & ${tribe2} (${getMapName(x.map_type)})`)
       setDesc.push('')
     })
     embed.setDescription(setDesc)
