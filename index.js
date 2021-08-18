@@ -60,7 +60,7 @@ bot.on('message', async message => {
   if (message.member.roles.cache.size < 1 && command.category !== 'Basic')
     return message.channel.send('You need a player role to use the bot. Do a practice set then contact the Mods. Good luck!')
 
-  if (command.category === 'Staff' && message.member.roles.cache.has('846775811863478302') && message.author.id !== '217385992837922819')
+  if (command.category === 'Staff' && message.member.roles.cache.has('829548653877657630') && message.author.id !== '217385992837922819')
     return message.channel.send('Only an admin can use this command, sorry!')
 
   const color = [

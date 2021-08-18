@@ -37,7 +37,7 @@ module.exports = {
       commands.forEach(cmd => {
         if (cmd.category === 'hidden' || cmd.name === 'help')
           return
-        if (message.member.roles.cache.has('846775811863478302') && cmd.category !== 'Basic')
+        if (message.member.roles.cache.has('829548653877657630') && cmd.category !== 'Basic')
           return
 
         const category = categoriesMapped[cmd.category]
