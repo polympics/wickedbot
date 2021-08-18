@@ -22,7 +22,7 @@ module.exports = {
         embed.setTitle(`Help card for \`${command.name}\``)
           .setDescription(`Description: ${command.description}`)
           .addField('Usage:', command.usage(process.env.PREFIX))
-        if(command.aliases.length > 0)
+        if (command.aliases.length > 0)
           embed.addField((command.aliases.length === 1) ? 'Alias:' : 'Aliases', '`' + command.aliases.join('`, `') + '`')
         return embed
       }
@@ -35,9 +35,9 @@ module.exports = {
       }
 
       commands.forEach(cmd => {
-        if(cmd.category === 'hidden' || cmd.name === 'help')
+        if (cmd.category === 'hidden' || cmd.name === 'help')
           return
-        if(!cmd.permsAllowed.some(x => message.member.hasPermission(x)) && cmd.category !== 'Basic')
+        if (message.member.roles.cache.has('846775811863478302') && cmd.category !== 'Basic')
           return
 
         const category = categoriesMapped[cmd.category]
@@ -58,7 +58,7 @@ module.exports = {
         for (const [name, details] of Object.entries(commandsList)) {
           field.push(`**${name}**: ${details.usage}`)
         }
-        if(field.length > 0)
+        if (field.length > 0)
           embed.addField(`**${cat}:**`, field)
       }
       return embed

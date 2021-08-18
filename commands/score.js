@@ -81,9 +81,9 @@ module.exports = {
       if (ressel.rows.length === 0)
         throw 'Looks like there\'s not set this id'
       const resPlayers = [ressel.rows[0].player_id, ressel.rows[1].player_id]
-      if (ressel.rows[0].completed && !message.member.hasPermission('MANAGE_GUILD' || 'ADMINISTRATOR'))
+      if (ressel.rows[0].completed && !message.member.roles.cache.has('846775811863478302'))
         throw 'Only moderators can override a score for a completed game.'
-      if (ressel.rows[0].completed && message.member.hasPermission('MANAGE_GUILD' || 'ADMINISTRATOR'))
+      if (ressel.rows[0].completed && message.member.roles.cache.has('846775811863478302'))
         message.channel.send('You have just overridden the previous score for this game.')
 
       if (!(resPlayers.some(x => x === player1.id) && resPlayers.some(x => x === player2.id)))
