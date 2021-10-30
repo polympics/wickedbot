@@ -35,7 +35,7 @@ module.exports = {
     } else
       embed.addField('Status:', 'Incomplete', true)
         .addField('Map type:', getMapName(rows[0].map_type), true)
-        .addField('Players', `${player1} (${player1.username ? player1.username : 'Player that left'})\n${player2} (${player2.username ? player2.username : 'Player that left'})`)
+        .addField('Players', `${player1} (${player1 ? player1.username : 'Player that left'})\n${player2} (${player2 ? player2.username : 'Player that left'})`)
         .setTitle(`Set ID: ${rows[0].id}`)
         .addField('Tribes:', `${tribe1} & ${tribe2}`)
 

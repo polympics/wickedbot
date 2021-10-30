@@ -68,7 +68,7 @@ module.exports = {
 
         const tribe1 = getTribe(x.tribes[0], emojiCache)
         const tribe2 = getTribe(x.tribes[1], emojiCache)
-        setDesc.push(`${x.id}: ${player1} (**@${player1.username ? player1.username : 'Player that left'}**) & ${player2} (**@${player2.username ? player2.username : 'Player that left'}**)`)
+        setDesc.push(`${x.id}: ${player1} (**@${player1 ? player1.username : 'Player that left'}**) & ${player2} (**@${player2 ? player2.username : 'Player that left'}**)`)
         setDesc.push(`${tribe1} & ${tribe2} (${getMapName(x.map_type)})`)
         setDesc.push('')
       })
